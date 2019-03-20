@@ -55,16 +55,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tile: {fileID: 1446586781791690, guid: f3256736736d0dc489a31ffc4ef36791, type: 2}
   frameNum: 0
-  testSquare: 0
-  testCircle: 1
   showBackground: 0
-  moveX: 40
-  moveY: 20
+  moveX: 0
+  moveY: 0
   resetButton: {fileID: 114310358448957440, guid: e35fa84a18c768d419ddc6eaa7e78842,
     type: 2}
   labels: {fileID: 114421809553619754, guid: c3dd19c41eee60b4fb227208a47e799f, type: 2}
   drawingNumber: 0
-  scale: 1
+  scale: 0.375
   rotationStep: 5
 --- !u!114 &114679157278219108
 MonoBehaviour:
@@ -77,7 +75,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9d9166f43954641aa90e52e735482f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputResolution: 128
+  originalResolution: 128
+  initialization: 0
+  training: 1
+  FirstConvolutionLayerFilters: ConvLayer1Filters
+  SecondConvolutionLayerFilters: ConvLayer2Filters
+  InputLayerFilters: InputLayerFilters
+  FullyConnectedLayerWeights: FCLayerWeights
+  OutputLayerWeights: OutputLayerWeights
+  Dalekozor: 1
+  Ljestve: 0
+  Laso: 0
+  LearningRate: 0.001
 --- !u!114 &114681676796661838
 MonoBehaviour:
   m_ObjectHideFlags: 1
