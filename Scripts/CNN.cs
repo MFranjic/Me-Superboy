@@ -21,6 +21,9 @@ public class CNN : MonoBehaviour {
     public bool Dalekozor = true;
     public bool Ljestve = false;
     public bool Laso = false;
+    public bool Ormar = false;
+    public bool Životinja = false;
+    public bool Pijuk = false;
 
     public double LearningRate = 0.1;
 
@@ -64,11 +67,11 @@ public class CNN : MonoBehaviour {
         MaxpoolLayer layer4 = new MaxpoolLayer(layer3.Convolution(), inputRes, 16, poolFieldResolution);
         inputRes /= 2;                                                                                                          // inputRes = 5
 
-        InputLayer layer5 = new InputLayer(layer4.Subsample(), inputRes, 36, InputLayerFilters, initialization);
+        InputLayer layer5 = new InputLayer(layer4.Subsample(), inputRes, 72, InputLayerFilters, initialization);
 
-        FullyConnectedLayer layer6 = new FullyConnectedLayer(layer5.Flatten(), 36, 25, FullyConnectedLayerWeights, initialization);
+        FullyConnectedLayer layer6 = new FullyConnectedLayer(layer5.Flatten(), 72, 50, FullyConnectedLayerWeights, initialization);
 
-        FullyConnectedLayer final = new FullyConnectedLayer(layer6.Calculate(), 25, 3, OutputLayerWeights, initialization);
+        FullyConnectedLayer final = new FullyConnectedLayer(layer6.Calculate(), 50, 6, OutputLayerWeights, initialization);
         //final.Calculate();
         double[] output = final.Calculate();
         SetGoal(output);

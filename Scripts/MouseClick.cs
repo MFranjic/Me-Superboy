@@ -12,22 +12,20 @@ public class MouseClick : MonoBehaviour {
     //public bool testSquare = true;
     //public bool testCircle = false;
     public bool showBackground = true;
+    public bool showButtons = true;
     
     public int moveX = 0;
     public int moveY = 0;
     public Button resetButton;
     public Text labels;
     public int drawingNumber;
-    public static int res = 128;
-    public float scale = 1;
+    public int res = 128;
+    public float scale = 0.375f;
     public float rotationStep = 5;
 
-    private static int resX = res;
-    private static int resY = res;
-    private static int buttonsPos = res / 32 * 100;
-
-    private GameObject[,] grid = new GameObject[resX, resY];
-    private int[,] visited = new int[resX, resY];
+    private int buttonsPos;
+    private GameObject[,] grid;
+    private int[,] visited;
     private Camera inputCamera;
     private int lineNum;
     private GameObject spriteObject;
@@ -41,9 +39,9 @@ public class MouseClick : MonoBehaviour {
     private bool mousePressed = false;
     private Color backgroundColor;
     private int xMax = 0;
-    private int xMin = resY;
+    private int xMin;
     private int yMax = 0;
-    private int yMin = resX;
+    private int yMin;
     private Text tempScale;
     private Text tempSquare;
     private Text tempCircle;
@@ -58,15 +56,20 @@ public class MouseClick : MonoBehaviour {
     void Start () {
         inputCamera = GameObject.Find("Camera").GetComponent<Camera>();
 
+        grid = new GameObject[res, res];
+        visited = new int[res, res];
+        buttonsPos = res / 32 * 100;
+        xMin = res;
+        yMin = res;
         //spriteObject = GameObject.Find("Color");
         float newScale = 0.4f * scale;
         backgroundColor = tile.GetComponent<SpriteRenderer>().color;
         tile.GetComponent<Transform>().localScale = new Vector3(newScale, newScale, 1);
         float tileRes = tile.GetComponent<SpriteRenderer>().bounds.size.x; 
 
-        for (int x = 0; x < resX; x++)
+        for (int x = 0; x < res; x++)
         {
-            for (int y = 0; y < resY; y++)
+            for (int y = 0; y < res; y++)
             {
                 //GameObject newTile = new GameObject("Color " + x + ", " + y);
                 GameObject newTile = Instantiate(tile, new Vector3(moveX + x  * scale, moveY + y * scale, 1), Quaternion.identity);
@@ -76,6 +79,12 @@ public class MouseClick : MonoBehaviour {
             }
         }
 
+        if (showButtons)
+            initializeButtons();
+    }
+
+    private void initializeButtons()
+    {
         tempButton = Instantiate(resetButton, new Vector3(0, 0, 1), Quaternion.identity) as Button;
         tempButton.name = "ScaleButton" + drawingNumber;
         tempButton.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>());
@@ -155,13 +164,13 @@ public class MouseClick : MonoBehaviour {
         //Debug.Log(grid);
         //sprite = spriteObject.GetComponent<SpriteRenderer>();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
     
         mousePosition = inputCamera.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
-        if (mousePosition.x > moveX && mousePosition.x < moveX + resY * scale && mousePosition.y > moveY && mousePosition.y < moveY + resX * scale)
+        if (mousePosition.x > moveX && mousePosition.x < moveX + res * scale && mousePosition.y > moveY && mousePosition.y < moveY + res * scale)
         {         
             if (Input.GetMouseButtonDown(0))
             {
@@ -254,8 +263,8 @@ public class MouseClick : MonoBehaviour {
         Vector3[] newArray = new Vector3[nodesNum];
         float xMax = moveX;
         float yMax = moveY;
-        float xMin = moveX + resX;
-        float yMin = moveY + resY;
+        float xMin = moveX + res;
+        float yMin = moveY + res;
         float xNew = 0;
         float yNew = 0;
         float newScale = 1;
@@ -275,9 +284,9 @@ public class MouseClick : MonoBehaviour {
         yNew = yMax - yMin;
 
         if (xNew > yNew)                        // scaling to a bigger axis
-            newScale = resX / xNew;
+            newScale = res / xNew;
         else
-            newScale = resX / yNew;
+            newScale = res / yNew;
 
         foreach (Vector3 node in nodesArray)
         {
@@ -309,9 +318,9 @@ public class MouseClick : MonoBehaviour {
         for (int i = 0; i < nodesNum; i++)
         {
             bool found = false;
-            for (int x = 0; x < resX; x++)
+            for (int x = 0; x < res; x++)
             {
-                for (int y = 0; y < resY; y++)
+                for (int y = 0; y < res; y++)
                 {
                     if (insideSprite(nodes[i], grid[x, y]))
                     {
@@ -341,9 +350,9 @@ public class MouseClick : MonoBehaviour {
             }
         }
 
-        for (int x = 0; x < resX; x++)
+        for (int x = 0; x < res; x++)
         {
-            for (int y = 0; y < resY; y++)
+            for (int y = 0; y < res; y++)
             {
                 if (visited[x, y] == 1 && showBackground)
                 {
@@ -496,9 +505,9 @@ public class MouseClick : MonoBehaviour {
 
     private void clearVisited()
     {
-        for (int x = 0; x < resX; x++)
+        for (int x = 0; x < res; x++)
         {
-            for (int y = 0; y < resY; y++)
+            for (int y = 0; y < res; y++)
             {
                 visited[x, y] = 0;
             }
@@ -509,8 +518,8 @@ public class MouseClick : MonoBehaviour {
     {
         float xMax = moveX;
         float yMax = moveY;
-        float xMin = moveX + resX;
-        float yMin = moveY + resY;
+        float xMin = moveX + res;
+        float yMin = moveY + res;
         float xNew = 0;
         float yNew = 0;
         float newScale = 1;
@@ -539,9 +548,9 @@ public class MouseClick : MonoBehaviour {
         yNew = yMax - yMin;
 
         if (xNew > yNew)                        // scaling to a bigger axis
-            newScale = resX / xNew;
+            newScale = res / xNew;
         else
-            newScale = resX / yNew;
+            newScale = res / yNew;
 
         foreach (LineRenderer line in lines)
         {
@@ -574,7 +583,7 @@ public class MouseClick : MonoBehaviour {
 
     public void Rotate()
     {
-        clearVisited();
+        //clearVisited();
         Vector3 pivot = new Vector3(25, 25, 0);
         rotationAngle += rotationStep;
         rotationLineNum = 0;
@@ -622,9 +631,9 @@ public class MouseClick : MonoBehaviour {
         frameCount = 0;
         mousePressed = false;
         xMax = 0;
-        xMin = resY;
+        xMin = res;
         yMax = 0;
-        yMin = resX;
+        yMin = res;
         //tempScale.text = "x, y";
         //tempCircle.text = "circle avg";
         //tempSquare.text = "square avg";
@@ -633,10 +642,15 @@ public class MouseClick : MonoBehaviour {
 
     public void ToggleVisited()
     {
-        showBackground = !showBackground;       
-        for (int x = 0; x < resX; x++)
+        showBackground = !showBackground;
+        refreshVisited();
+    }
+
+    private void refreshVisited()
+    {
+        for (int x = 0; x < res; x++)
         {
-            for (int y = 0; y < resY; y++)
+            for (int y = 0; y < res; y++)
             {
                 if (showBackground)
                 {
@@ -644,50 +658,39 @@ public class MouseClick : MonoBehaviour {
                         grid[x, y].GetComponent<SpriteRenderer>().color = Color.white;
                     else if (visited[x, y] == 2)
                         grid[x, y].GetComponent<SpriteRenderer>().color = Color.red;
+                    else
+                        grid[x, y].GetComponent<SpriteRenderer>().color = backgroundColor;
                 }
                 else
                     grid[x, y].GetComponent<SpriteRenderer>().color = backgroundColor;
             }
-        }      
+        }
     }
 
     IEnumerator TrainCNN()
     {
         for (int i = 1; i < 71; i++)
         {
-            gameObject.GetComponent<CNN>().test(visited);
+            clearVisited();
             Rotate();
-            yield return new WaitForSeconds(1);
-            for (int x = 0; x < resX; x++)
-            {
-                for (int y = 0; y < resY; y++)
-                {
-                    if (showBackground)
-                    {
-                        if (visited[x, y] == 1)
-                            grid[x, y].GetComponent<SpriteRenderer>().color = Color.white;
-                        else if (visited[x, y] == 2)
-                            grid[x, y].GetComponent<SpriteRenderer>().color = Color.red;
-                        else
-                            grid[x, y].GetComponent<SpriteRenderer>().color = backgroundColor;
-                    }
-                    else
-                        grid[x, y].GetComponent<SpriteRenderer>().color = backgroundColor;
-                }
-            }
+            gameObject.GetComponent<CNN>().test(visited);
+            refreshVisited();
+            yield return new WaitForSeconds(1);           
         }
+        Debug.Log("Training batch completed.");
     }
 
     public void StartTraining()
-    {
-        clearVisited();
+    {        
         StartCoroutine(TrainCNN());
     }
 
     public void InitializeCNN()
     {
-        gameObject.GetComponent<CNN>().test(visited);
+        clearVisited();
         Rotate();
+        gameObject.GetComponent<CNN>().test(visited);       
+        refreshVisited();
         //double[] results = gameObject.GetComponent<CNN>().test(visited);
         //string temp = "";
         //Debug.Log("Dalekozor: " + results[0]);
